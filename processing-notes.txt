@@ -1,0 +1,39 @@
+18/9/2024:
+Measured speed at 45rpm = 43.84 (-2.64%) 1.0264x to correct
+Measured speed at 33.3333rpm = 33.17 (-0.48%) 1.0049x to correct
+
+Mid-side processing
+===================
+
+Convert Left/Right stereo to Mid/Side stereo:
+
+"sox lr-stereo-input.wav mid-output.wav remix 1,2"
+
+"sox lr-stereo-input.wav side-output.wav remix 1v0.5,2v-0.5"
+
+Merge the Mid and Side signals into a stereo file:
+
+"sox -M mid-output.wav side-output.wav ms-stereo-output.wav"
+
+Convert Mid/Sid stereo to L/R stereo:
+
+"sox ms-stereo-output.wav lr-stereo-output.wav remix -m 1,2 1,2i" (note the "-m" flag, meaning that we are adding full amplitude-signals)
+
+Thanks again,
+Marlon
+
+High-pass filtering
+===================
+
+sox --multi-threaded inputfile.wav outputfile.wav  sinc -L 22 -n 32767 reverse sinc -L 22 -n 32767 reverse
+
+(this command line runs the same filter again in reverse, which for any, doubles its strength while cancelling/making symmetric any phase or transient effects.)
+
+This is steeper than a 10th order Chebychev filter using custom coefficients (60dB/octave).
+
+Suggest 150Hz on side, 15-22Hz on mid.
+
+Speed adjust
+============
+sox input.wav output.wav speed 1.0264
+
